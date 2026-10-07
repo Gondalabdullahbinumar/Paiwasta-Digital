@@ -1,0 +1,88 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Rings from '../components/Rings.astro';
+import { services, serviceHref, serviceGuide } from '../data/site';
+---
+<Base path="/services" current="services">
+  <PageHero title="Five services, planned as one" intro="Each service is complete on its own, and each one is built to connect with the other four." crumb="Services" />
+
+  <section aria-label="The five services" class="section">
+    <div class="container list">
+      {services.map((s) => (
+        <article data-reveal aria-labelledby={`svc-${s.key}`} class="svc">
+          <div>
+            <p class="n">{s.n}</p>
+            <h2 id={`svc-${s.key}`} class="svc-h">{s.name}</h2>
+            <p class="short">{s.short}</p>
+          </div>
+          <div class="svc-right">
+            <ul class="three">
+              {s.three.map((t) => <li><span aria-hidden="true"></span>{t}</li>)}
+            </ul>
+            <div class="svc-foot">
+              <p class="start">{s.startPrice}</p>
+              <a href={serviceHref(s)} class="text-link">Explore {s.name}</a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section aria-labelledby="ring-h" class="section navy">
+    <div class="ring-wrap">
+      <p class="eyebrow">Interlinked</p>
+      <h2 id="ring-h" class="h2 ring-h">Five rings, one chain</h2>
+      <div class="ring-ill"><Rings max="760px" label="Five services shown as five linked rings" /></div>
+      <ul class="ring-names">
+        {services.map((s) => <li><a href={serviceHref(s)}>{s.name}</a></li>)}
+      </ul>
+      <p class="ring-text">Your brand sets the look. Your website carries it. Your videos bring people in. Your AI assistant answers them. Your software keeps the data in one place. Because one team plans all five, they fit together from the first day.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="need-h" class="section">
+    <div class="container">
+      <p class="eyebrow">A short guide</p>
+      <h2 id="need-h" class="h2 need-h">Which service do I need?</h2>
+      <div class="guide">
+        {serviceGuide.map(([need, answer, href, why]) => (
+          <div data-reveal class="g-row">
+            <p class="g-need">{need}</p>
+            <p class="g-ans"><a href={href} class="g-link">{answer}</a><span>{why}</span></p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .list { display: flex; flex-direction: column; }
+  .svc { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 24px 56px; padding: 40px 0; border-top: 1px solid var(--color-divider); }
+  .n { margin: 0 0 10px; font: 600 28px/1 var(--font-heading); color: #0E9F6E; }
+  .svc-h { margin: 0 0 12px; font-size: clamp(26px, 3vw, 36px); }
+  .short { margin: 0; max-width: 46ch; }
+  .svc-right { display: flex; flex-direction: column; gap: 18px; }
+  .three { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .three li { display: flex; gap: 12px; }
+  .three span { width: 14px; height: 1px; background: #0E9F6E; margin-top: 13px; flex-shrink: 0; }
+  .svc-foot { display: flex; flex-wrap: wrap; gap: 4px 28px; align-items: center; }
+  .start { margin: 0; font: 600 18px var(--font-heading); color: #0B1F3A; }
+  .ring-wrap { max-width: 1100px; margin: 0 auto; text-align: center; }
+  .ring-h { margin: 0 auto 48px; max-width: 22ch; }
+  .ring-ill { max-width: 760px; margin: 0 auto; }
+  .ring-names { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; max-width: 760px; margin: 20px auto 0; }
+  .ring-names a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font: 500 13px/1.35 var(--font-body); color: #C3D1DE; text-decoration: none; overflow-wrap: anywhere; }
+  .ring-names a:hover { color: #3FCF9A; }
+  @media (max-width: 520px) { .ring-names { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); } }
+  .ring-text { margin: 40px auto 0; max-width: 60ch; color: rgba(247,249,251,.8); }
+  .need-h { margin: 0 0 40px; }
+  .guide { border-top: 1px solid var(--color-divider); }
+  .g-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 8px 40px; padding: 22px 0; border-bottom: 1px solid var(--color-divider); align-items: baseline; }
+  .g-need { margin: 0; font: 600 17px/1.4 var(--font-heading); color: #0B1F3A; }
+  .g-ans { margin: 0; display: flex; flex-wrap: wrap; gap: 0 14px; align-items: baseline; }
+  .g-link { font-weight: 600; display: inline-flex; align-items: center; min-height: 44px; }
+  .g-ans span { font-size: 15px; }
+</style>
