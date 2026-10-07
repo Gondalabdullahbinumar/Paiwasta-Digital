@@ -275,9 +275,11 @@ const pkgLabel = (k: string) => byKey[k as keyof typeof byKey].name;
       dots.forEach((d, i) => d.classList.toggle('done', i <= ci));
       story.classList.toggle('join-on', p > 0.66 && p < 0.86);
     };
-    addEventListener('scroll', update, { passive: true });
-    addEventListener('resize', () => { lastP = -1; update(); });
-    update();
+    // Follow the scroll position every frame, so the text is right even when the page
+    // opens part-way down (for example after pressing Back).
+    const loop = () => { if (!root.classList.contains('pw-3d')) return; if (!document.hidden) update(); requestAnimationFrame(loop); };
+    addEventListener('resize', () => { lastP = -1; });
+    loop();
 
     // "Scroll to see how they connect" moves to the first link stage.
     document.querySelector('[data-next]')?.addEventListener('click', () => {
@@ -295,6 +297,15 @@ const pkgLabel = (k: string) => byKey[k as keyof typeof byKey].name;
       let ok = false;
       try { const c = document.createElement('canvas'); ok = !!(c.getContext('webgl2') || c.getContext('webgl')); } catch (e) {}
       if (!ok) return toStatic();
+      // Devices drawing 3D in software (no graphics chip) get the static version; the scene would be too slow.
+      if (!/[?&]3d\b/.test(location.search)) {
+        try {
+          const gl = document.createElement('canvas').getContext('webgl') as WebGLRenderingContext | null;
+          const ext = gl?.getExtension('WEBGL_debug_renderer_info');
+          const r = ext ? String(gl!.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : '';
+          if (/swiftshader|llvmpipe|software|basic render/i.test(r)) return toStatic();
+        } catch (e) {}
+      }
       import('../scripts/home3d.js').then((m) => m.init({
         mount: stage, story, lite,
         links: JSON.parse(stage.dataset.links!),
@@ -328,7 +339,7 @@ const pkgLabel = (k: string) => byKey[k as keyof typeof byKey].name;
   }
   .story-sticky { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 48px; align-items: center; }
   .hero-copy { min-width: 0; }
-  .eyebrow { color: #3FCF9A; }
+  .story .eyebrow { color: #3FCF9A; }
   .hero-copy .eyebrow { margin-bottom: 18px; letter-spacing: .18em; }
   h1 { margin: 0 0 18px; color: #F7F9FB; font-size: clamp(38px, 6vw, 76px); line-height: 1.04; max-width: 13ch; }
   .hero-lead { margin: 0 0 28px; font-size: clamp(17px, 1.7vw, 21px); color: rgba(247,249,251,.86); max-width: 50ch; }

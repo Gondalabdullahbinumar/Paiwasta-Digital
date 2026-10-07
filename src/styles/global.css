@@ -60,6 +60,7 @@ h1, h2, h3, h4 {
 p, li { text-wrap: pretty; }
 p { margin: 0 0 10px; }
 a { color: var(--pw-link); text-underline-offset: 3px; }
+td > a:only-child, dd > a:only-child { display: inline-flex; align-items: center; min-height: 44px; }
 a:hover { color: var(--pw-heading); }
 img, svg, video { max-width: 100%; }
 img { display: block; height: auto; }
