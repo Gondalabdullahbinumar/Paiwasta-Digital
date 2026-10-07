@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import Rings from '../components/Rings.astro';
+import { business, features } from '../data/site';
+const rt = business.responseTime;
+---
+<Base path="/thank-you" cta={false} noindex>
+  <section class="ty navy">
+    <div class="wrap">
+      <div class="rings"><Rings max="240px" decorative /></div>
+      <p role="status" class="eyebrow">Request received</p>
+      <h1>Thank you<span data-name></span>. Your request is with our team.</h1>
+      <p class="lead">We read every request personally. You will hear from us {rt}, on the phone number or email you gave us.</p>
+      <h2 class="next-h">What happens next</h2>
+      <ol class="steps">
+        <li><p class="k">01 · {rt[0].toUpperCase() + rt.slice(1)}</p><p>We reply to suggest a time for your free discovery call.</p></li>
+        <li><p class="k">02 · The call</p><p>30 to 45 minutes about your business, by phone, video or in person.</p></li>
+        <li><p class="k">03 · Your proposal</p><p>A written scope, timeline and fixed quote, with no obligation.</p></li>
+      </ol>
+      <p class="muted-navy">While you wait, you may find these useful:</p>
+      <div class="links">
+        <a class="btn btn-primary" href="/work">See our work</a>
+        {features.insights ? <a class="btn btn-on-navy" href="/insights">Read our insights</a> : <a class="btn btn-on-navy" href="/process">See how we work</a>}
+        <a href="/" class="text-link home">Back to home</a>
+      </div>
+    </div>
+  </section>
+</Base>
+<script>
+  try {
+    const n = sessionStorage.getItem('pw-contact-name');
+    if (n) document.querySelector('[data-name]')!.textContent = ', ' + n.split(' ')[0];
+  } catch {}
+</script>
+<style>
+  .ty { padding: calc(var(--header-h) + clamp(64px, 10vw, 124px)) var(--gutter) clamp(80px, 10vw, 140px); }
+  .wrap { max-width: 820px; margin: 0 auto; }
+  .rings { width: min(240px, 70%); margin-bottom: 32px; }
+  .eyebrow { margin-bottom: 14px; }
+  h1 { margin: 0 0 20px; color: #F7F9FB; font-size: clamp(34px, 5vw, 60px); line-height: 1.08; }
+  .lead { margin: 0 0 48px; font-size: 19px; color: rgba(247,249,251,.84); max-width: 56ch; }
+  .next-h { margin: 0 0 24px; font-size: 24px; }
+  .steps { margin: 0 0 56px; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 24px; }
+  .steps li { padding-top: 20px; border-top: 1px solid #0E9F6E; }
+  .steps p { margin: 0; color: rgba(247,249,251,.86); }
+  .steps .k { margin: 0 0 6px; font: 600 13px var(--font-body); color: #3FCF9A; }
+  .links { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; }
+  .home { color: #3FCF9A; padding: 0 4px; }
+</style>

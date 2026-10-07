@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import LegalPage from '../components/LegalPage.astro';
+import { business, displayName } from '../data/site';
+
+const sections = [
+  { h: 'About these terms', p: [`These terms apply to the use of this website and to services provided by ${displayName}. When you start a project with us, the written agreement for that project sets out the full terms, and it takes priority over this summary.`] },
+  { h: 'Proposals and quotes', p: ['Prices on this website are starting prices in Pakistani rupees. A fixed quote is given in a written proposal after a free discovery call, before any work begins.'] },
+  { h: 'Payments', p: [`A ${business.depositPercent}% deposit is due before work begins, work is delivered in milestones, and the balance is due at launch.`, 'Work beyond the agreed scope is quoted and confirmed with you before it starts.'] },
+  { h: 'Care plans', p: ['One Care plan comes with every package, starts on launch day and is billed in advance, monthly or quarterly. Extra work is billed at PKR 2,000 per hour. WhatsApp message charges and AI usage above the fair-use limit are passed on at cost. Unused hours do not carry over to the next month.'] },
+  { h: 'Ownership of work', p: ['The domain is registered in the client’s name. Ownership of the designs, code and content created for your project passes to you on final payment, as set out in your agreement.'] },
+  { h: 'Client responsibilities', p: ['You provide content, approvals and access in good time, and confirm that you have the rights to any material you give us to use. Delays in content or approvals can move the timeline.'] },
+  { h: 'Using this website', p: ['The content of this website belongs to Paiwasta Technologies. You may share links to it, but please do not copy its text or designs for commercial use without permission. We work to keep the information accurate, but prices and details can change.'] },
+  { h: 'Ending the agreement', p: ['How either side may end a project or a Care plan is set out in your written agreement. When a Care plan ends, we hand over your files, domain access and hosting details so you or another provider can continue.'] },
+];
+---
+<Base path="/terms" noindex>
+  <LegalPage title="Terms of Service" intro="The terms that apply when you work with us or use this website." sections={sections} />
+</Base>

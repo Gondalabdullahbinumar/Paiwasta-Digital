@@ -1,0 +1,140 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Rings from '../components/Rings.astro';
+import { getCollection } from 'astro:content';
+import { features, forms } from '../data/site';
+
+const all = (await getCollection('articles', (a) => !a.data.draft))
+  .sort((a, b) => (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0));
+const feat = all.find((a) => a.data.featured) ?? all[0];
+const rest = all.filter((a) => a !== feat);
+const cats = ['Web', 'Software', 'Design', 'Video', 'AI', 'Business'];
+// Filters and page numbers appear automatically once there are enough articles.
+const PER = 6;
+const showFilters = rest.length >= PER;
+const fmt = (d?: Date) => d?.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const showNewsletter = features.newsletter && !!forms.web3formsKey;
+---
+<Base path="/insights" current="insights" noindex={!features.insights}>
+  <PageHero title="Insights" intro="Practical guidance for business owners on building a connected online presence." crumb="Insights" />
+  {feat && (
+    <section aria-labelledby="ft-h" class="section-tight no-bottom">
+      <div class="container">
+        <h2 id="ft-h" class="eyebrow ft-h">Featured article</h2>
+        <a href={`/insights/${feat.id}`} class="card blueprint feat">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div class="feat-img"><Rings max="320px" decorative /></div>
+          <div class="feat-body">
+            <span class="card-kicker">{feat.data.category} · {feat.data.minutes} min read{feat.data.date && <> · {fmt(feat.data.date)}</>}</span>
+            <h3 class="feat-t">{feat.data.title}</h3>
+            <p class="m0">{feat.data.excerpt}</p>
+            <span class="read">Read the article</span>
+          </div>
+        </a>
+      </div>
+    </section>
+  )}
+  {rest.length > 0 && (
+    <section aria-labelledby="al-h" class="section-tight">
+      <div class="container">
+        <h2 id="al-h" class="h2 al-h">All articles</h2>
+        {showFilters && (
+          <div role="group" aria-label="Filter by category" class="cats" data-cats>
+            <button type="button" aria-pressed="true" data-cat="All">All</button>
+            {cats.map((c) => <button type="button" aria-pressed="false" data-cat={c}>{c}</button>)}
+          </div>
+        )}
+        <div class="grid-auto" data-list data-per={PER}>
+          {rest.map((a) => (
+            <a href={`/insights/${a.id}`} class="card blueprint" data-cat={a.data.category}>
+              <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+              <span class="card-kicker">{a.data.category} · {a.data.minutes} min read</span>
+              <h3 class="card-title">{a.data.title}</h3>
+              <p class="card-body">{a.data.excerpt}</p>
+              {a.data.date && <span class="date">{fmt(a.data.date)}</span>}
+            </a>
+          ))}
+        </div>
+        <p class="none" data-none hidden>No articles in this category yet. New articles are added regularly.</p>
+        <nav aria-label="Pagination" class="pager" data-pager hidden></nav>
+      </div>
+    </section>
+  )}
+  {showNewsletter && (
+    <section aria-labelledby="nl-h" class="section-tight">
+      <div class="blueprint container nl">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div><h2 id="nl-h" class="nl-h">Receive new articles by email</h2><p class="m0">One short email when a new article is published. You can unsubscribe at any time.</p></div>
+        <form method="post" action="https://api.web3forms.com/submit" class="nl-form">
+          <input type="hidden" name="access_key" value={forms.web3formsKey} />
+          <input type="hidden" name="subject" value="Newsletter signup from the website" />
+          <input type="checkbox" name="botcheck" class="hp" tabindex="-1" aria-hidden="true" />
+          <label for="nl-email" class="label">Email address</label>
+          <div class="nl-row"><input id="nl-email" name="email" class="input" type="email" autocomplete="email" required /><button type="submit" class="btn btn-primary">Subscribe</button></div>
+        </form>
+      </div>
+    </section>
+  )}
+</Base>
+
+<script>
+  const list = document.querySelector<HTMLElement>('[data-list]');
+  if (list) {
+    const PER = Number(list.dataset.per);
+    const cards = [...list.querySelectorAll<HTMLElement>('a[data-cat]')];
+    const none = document.querySelector<HTMLElement>('[data-none]')!;
+    const pager = document.querySelector<HTMLElement>('[data-pager]')!;
+    let cat = 'All', page = 0;
+    const render = () => {
+      const match = cards.filter((c) => cat === 'All' || c.dataset.cat === cat);
+      const pages = Math.max(1, Math.ceil(match.length / PER)); page = Math.min(page, pages - 1);
+      cards.forEach((c) => (c.hidden = true));
+      match.slice(page * PER, page * PER + PER).forEach((c) => (c.hidden = false));
+      none.hidden = match.length > 0;
+      pager.hidden = pages < 2;
+      pager.innerHTML = '';
+      if (pages > 1) {
+        const btn = (label: string, to: number, opts: { cur?: boolean; dis?: boolean; aria?: string } = {}) => {
+          const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.className = 'pg';
+          if (opts.cur) b.setAttribute('aria-current', 'page'); if (opts.aria) b.setAttribute('aria-label', opts.aria); b.disabled = !!opts.dis;
+          b.addEventListener('click', () => { page = to; render(); list.scrollIntoView({ block: 'start' }); }); pager.append(b);
+        };
+        btn('Previous', page - 1, { dis: page === 0 });
+        for (let i = 0; i < pages; i++) btn(String(i + 1), i, { cur: i === page, aria: `Page ${i + 1}` });
+        btn('Next', page + 1, { dis: page === pages - 1 });
+      }
+    };
+    document.querySelector('[data-cats]')?.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-cat]'); if (!b) return;
+      cat = b.dataset.cat!; page = 0;
+      document.querySelectorAll('[data-cats] button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      render();
+    });
+    render();
+  }
+</script>
+
+<style>
+  .no-bottom { padding-bottom: 0; }
+  .ft-h { margin: 0 0 24px; }
+  .feat { padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); }
+  .feat-img { min-height: 260px; background: #0B1F3A; display: flex; align-items: center; justify-content: center; padding: 32px; }
+  .feat-body { padding: clamp(24px, 4vw, 48px); display: flex; flex-direction: column; gap: 14px; justify-content: center; }
+  .feat-t { margin: 0; font-size: clamp(24px, 2.8vw, 34px); }
+  .m0 { margin: 0; }
+  .read { font-weight: 600; color: #0A7A55; }
+  .al-h { margin: 0 0 24px; }
+  .cats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  .cats button, .pager :global(.pg) { min-height: 44px; min-width: 46px; padding: 0 16px; border: 1px solid var(--color-divider); background: transparent; color: #334155; font: 500 14px var(--font-body); cursor: pointer; }
+  .cats button[aria-pressed='true'], .pager :global(.pg[aria-current]) { border-color: #0E9F6E; background: #0B1F3A; color: #F7F9FB; }
+  .pager :global(.pg:disabled) { opacity: .45; cursor: not-allowed; }
+  .pager { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 48px; }
+  [data-list] a[hidden] { display: none; }
+  .date { font-size: 13px; color: #5B6B7F; }
+  .none { padding: 40px; border: 1px dashed var(--color-divider); text-align: center; margin: 0; }
+  .nl { padding: clamp(28px, 4vw, 56px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 24px 48px; align-items: center; }
+  .nl-h { margin: 0 0 10px; font-size: clamp(24px, 2.8vw, 34px); }
+  .nl-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .nl-row .input { flex: 1; min-width: 200px; }
+</style>

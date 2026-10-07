@@ -1,0 +1,154 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { business, contact, forms, whatsappUrl } from '../data/site';
+
+const site = Astro.site!;
+const thanks = new URL('/thank-you', site).href;
+const svcOptions = ['Starter package', 'Growth package', 'Complete package', 'Web Development', 'Software Development', 'Graphic Design', 'Video Marketing', 'AI Integrations', 'Not sure yet'];
+const budgets = ['Under PKR 65,000', 'PKR 65,000 to 140,000', 'PKR 140,000 to 220,000', 'PKR 220,000 to 600,000', 'Above PKR 600,000', 'Not sure yet'];
+const details = [
+  whatsappUrl && { k: 'WhatsApp', v: contact.whatsappLabel ?? contact.whatsapp, href: whatsappUrl, ext: true },
+  contact.email && { k: 'Email', v: contact.email, href: `mailto:${contact.email}` },
+  contact.phone && { k: 'Phone', v: contact.phone, href: `tel:${contact.phone.replace(/[^\d+]/g, '')}` },
+  { k: 'Office', v: contact.address ?? `${business.city}, ${business.country}` },
+  contact.hours && { k: 'Hours', v: contact.hours },
+].filter(Boolean) as { k: string; v: string; href?: string; ext?: boolean }[];
+---
+<Base path="/contact" current="contact" cta={false}>
+  <PageHero title="Book a free consultation" intro="Tell us about your business. We will reply with a time for a short call and honest advice on where to start." crumb="Contact" />
+  <section class="section-tight">
+    <div class="container layout">
+      <form class="blueprint cform" method="post" action="https://api.web3forms.com/submit" novalidate aria-labelledby="cf-h" data-contact>
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div class="full"><h2 id="cf-h" class="cf-h">Consultation request</h2><p class="small">Fields marked * are required.</p></div>
+        <div class="form-alert full" role="alert" data-summary hidden></div>
+
+        <input type="hidden" name="access_key" value={forms.web3formsKey ?? ''} />
+        <input type="hidden" name="subject" value="New consultation request from the website" />
+        <input type="hidden" name="from_name" value="Paiwasta website" />
+        <input type="hidden" name="redirect" value={thanks} />
+        <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <div class="field"><label for="c-name">Your name *</label><input id="c-name" name="name" class="input" autocomplete="name" required aria-describedby="c-name-e" /><p id="c-name-e" class="field-error"></p></div>
+        <div class="field"><label for="c-biz">Business name *</label><input id="c-biz" name="business" class="input" autocomplete="organization" required aria-describedby="c-biz-e" /><p id="c-biz-e" class="field-error"></p></div>
+        <div class="field"><label for="c-phone">Phone or WhatsApp *</label><input id="c-phone" name="phone" class="input" type="tel" autocomplete="tel" inputmode="tel" placeholder="03XX XXXXXXX" required aria-describedby="c-phone-e" /><p id="c-phone-e" class="field-error"></p></div>
+        <div class="field"><label for="c-email">Email *</label><input id="c-email" name="email" class="input" type="email" autocomplete="email" required aria-describedby="c-email-e" /><p id="c-email-e" class="field-error"></p></div>
+        <div class="field"><label for="c-svc">Service of interest *</label><select id="c-svc" name="service" class="input" required aria-describedby="c-svc-e"><option value="">Choose one</option>{svcOptions.map((o) => <option>{o}</option>)}</select><p id="c-svc-e" class="field-error"></p></div>
+        <div class="field"><label for="c-budget">Budget range *</label><select id="c-budget" name="budget" class="input" required aria-describedby="c-budget-e"><option value="">Choose a range</option>{budgets.map((o) => <option>{o}</option>)}</select><p id="c-budget-e" class="field-error"></p></div>
+        <div class="field full"><label for="c-msg">Tell us about your business and what you need *</label><textarea id="c-msg" name="message" class="input" rows="5" required aria-describedby="c-msg-e"></textarea><p id="c-msg-e" class="field-error"></p></div>
+        <div class="full"><label class="check"><input type="checkbox" id="c-ok" name="consent" value="Yes" required aria-describedby="c-ok-e" /><span>I agree that Paiwasta Technologies may contact me about this request, as described in the <a href="/privacy">Privacy Policy</a>. *</span></label><p id="c-ok-e" class="field-error"></p></div>
+        <div class="full actions">
+          <button type="submit" class="btn btn-primary" data-submit>Request my free consultation</button>
+          {whatsappUrl && <a href={whatsappUrl} target="_blank" rel="noopener" class="text-link">Or message us on WhatsApp</a>}
+        </div>
+      </form>
+
+      <aside aria-label="Contact details" class="aside">
+        <div>
+          <h2 class="side-h">Contact details</h2>
+          <dl class="dl">
+            {details.map((d) => (
+              <><dt>{d.k}</dt><dd>{d.href ? <a href={d.href} target={d.ext ? '_blank' : undefined} rel={d.ext ? 'noopener' : undefined}>{d.v}</a> : d.v}</dd></>
+            ))}
+          </dl>
+        </div>
+        {contact.mapEmbedUrl && (
+          <div class="blueprint map">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <iframe src={contact.mapEmbedUrl} title={`Map showing the Paiwasta Technologies office in ${business.city}`} loading="lazy" referrerpolicy="no-referrer-when-downgrade" width="600" height="450"></iframe>
+          </div>
+        )}
+        <div>
+          <h2 class="side-h">What happens next</h2>
+          <ol class="next">
+            <li><span class="dot" aria-hidden="true"></span><h3>We reply</h3><p>{business.responseTime[0].toUpperCase() + business.responseTime.slice(1)}, by your preferred channel, to suggest a call time.</p></li>
+            <li><span class="dot" aria-hidden="true"></span><h3>We talk</h3><p>A free 30 to 45 minute discovery call about your business and goals.</p></li>
+            <li><span class="dot" aria-hidden="true"></span><h3>You receive a proposal</h3><p>A written scope, timeline and fixed quote. There is no obligation to proceed.</p></li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact]')!;
+  const summary = form.querySelector<HTMLElement>('[data-summary]')!;
+  const btn = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+  const F = ['name', 'biz', 'phone', 'email', 'svc', 'budget', 'msg', 'ok'] as const;
+  type K = (typeof F)[number];
+  const el = (k: K) => document.getElementById(`c-${k}`) as HTMLInputElement;
+  const empty: Record<K, string> = {
+    name: 'Please enter your name.', biz: 'Please enter your business name.', phone: 'Please enter a phone or WhatsApp number.',
+    email: 'Please enter your email address.', svc: 'Please choose a service, or select Not sure yet.',
+    budget: 'Please choose a budget range, or select Not sure yet.', msg: 'Please tell us briefly what you need.', ok: 'Please confirm we may contact you.',
+  };
+  const check = (k: K): string => {
+    const i = el(k);
+    if (k === 'ok') return i.checked ? '' : empty.ok;
+    const s = i.value.trim();
+    if (!s) return empty[k];
+    if (k === 'email' && !/^\S+@\S+\.\S+$/.test(s)) return 'Please enter a valid email address, for example name@business.com.';
+    if (k === 'phone' && s.replace(/\D/g, '').length < 10) return 'Please enter a full phone number, including the area or mobile code.';
+    if (k === 'msg' && s.length < 10) return 'Please add a little more detail, at least 10 characters.';
+    return '';
+  };
+  const show = (k: K, msg: string) => {
+    el(k).setAttribute('aria-invalid', msg ? 'true' : 'false');
+    document.getElementById(`c-${k}-e`)!.textContent = msg;
+  };
+  let tried = false;
+  F.forEach((k) => {
+    const i = el(k);
+    i.addEventListener('blur', () => { if (tried || (k !== 'ok' && i.value)) show(k, check(k)); });
+    i.addEventListener(k === 'ok' || i.tagName === 'SELECT' ? 'change' : 'input', () => { if (i.getAttribute('aria-invalid') === 'true') show(k, check(k)); });
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); tried = true;
+    const errs = F.map((k) => [k, check(k)] as const);
+    errs.forEach(([k, m]) => show(k, m));
+    const bad = errs.filter(([, m]) => m);
+    if (bad.length) {
+      summary.hidden = false;
+      summary.textContent = bad.length === 1 ? 'Please correct the highlighted field below.' : `Please correct the ${bad.length} highlighted fields below.`;
+      el(bad[0][0]).focus();
+      return;
+    }
+    summary.hidden = true;
+    btn.disabled = true; btn.textContent = 'Sending';
+    try {
+      const res = await fetch(form.action, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || !out.success) throw new Error(out.message || 'Send failed');
+      try { sessionStorage.setItem('pw-contact-name', el('name').value.trim()); } catch {}
+      location.href = '/thank-you';
+    } catch {
+      summary.hidden = false;
+      summary.textContent = 'Sorry, your request could not be sent. Please check your connection and try again in a moment.';
+      btn.disabled = false; btn.textContent = 'Request my free consultation';
+    }
+  });
+</script>
+
+<style>
+  .layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr)); gap: 48px 72px; align-items: start; }
+  @media (min-width: 1100px) { .layout { grid-template-columns: 3fr 2fr; } }
+  .cform { padding: clamp(20px, 4vw, 44px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 20px; min-width: 0; }
+  .full { grid-column: 1 / -1; }
+  .cf-h { margin: 0 0 6px; font-size: clamp(24px, 2.8vw, 32px); }
+  .small { margin: 0; font-size: 14px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+  .aside { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
+  .side-h { margin: 0 0 16px; font-size: 22px; }
+  .dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 12px 20px; font-size: 15px; }
+  .dl dt { font-weight: 600; color: #0B1F3A; }
+  .dl dd { margin: 0; overflow-wrap: anywhere; }
+  .map iframe { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; border: 0; }
+  .next { margin: 0; padding: 0; list-style: none; border-left: 1px solid #0E9F6E; display: flex; flex-direction: column; gap: 20px; }
+  .next li { position: relative; padding-left: 24px; }
+  .dot { position: absolute; left: -6px; top: 6px; width: 11px; height: 11px; border-radius: 50%; background: #F7F9FB; border: 1px solid #0E9F6E; }
+  .next h3 { margin: 0 0 4px; font-size: 17px; }
+  .next p { margin: 0; font-size: 15px; }
+</style>

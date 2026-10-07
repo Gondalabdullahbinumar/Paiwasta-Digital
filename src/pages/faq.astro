@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Faq from '../components/Faq.astro';
+import { faqs } from '../data/site';
+
+const groups = Object.entries(faqs).map(([k, g]) => ({ id: `faq-${k}`, ...g }));
+// FAQPage structured data: the same questions and answers that are visible on the page.
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: groups.flatMap((g) => g.items.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } }))),
+};
+---
+<Base path="/faq" jsonLd={[faqLd]}>
+  <PageHero title="Frequently asked questions" intro="Straight answers about how we work, what it costs and what you own." crumb="FAQ" />
+  <section class="section-tight">
+    <div class="container layout">
+      <nav aria-label="FAQ groups" class="groups">
+        {groups.map((g) => <a href={`#${g.id}`}>{g.title}</a>)}
+      </nav>
+      <div class="col">
+        {groups.map((g) => (
+          <section id={g.id} aria-labelledby={`${g.id}-h`}>
+            <h2 id={`${g.id}-h`} class="g-h">{g.title}</h2>
+            <Faq items={g.items} />
+          </section>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .layout { display: grid; grid-template-columns: 1fr; gap: 40px 64px; align-items: start; }
+  @media (min-width: 900px) { .layout { grid-template-columns: 240px 1fr; } .groups { position: sticky; top: calc(var(--header-h) + 24px); } }
+  .groups { display: flex; flex-direction: column; border-left: 1px solid var(--color-divider); }
+  .groups a { display: flex; align-items: center; min-height: 44px; padding: 0 16px; text-decoration: none; color: #334155; font-size: 15px; }
+  .groups a:hover { color: #0A7A55; box-shadow: inset 2px 0 0 #0E9F6E; }
+  .col { min-width: 0; max-width: 860px; display: flex; flex-direction: column; gap: 56px; }
+  .g-h { margin: 0 0 16px; font-size: clamp(24px, 2.8vw, 32px); }
+</style>

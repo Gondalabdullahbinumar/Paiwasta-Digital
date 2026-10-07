@@ -1,0 +1,168 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { forms, jobs } from '../data/site';
+
+const site = Astro.site!;
+const formReady = !!forms.careersFormsubmit;
+const nextUrl = new URL('/careers?applied=1#apply', site).href;
+const roleOpts = [...jobs.map((j) => j.title), 'General application'];
+const howWeWork = [
+  'Every project is planned across disciplines from the first day, so you work closely with people outside your specialty.',
+  'We write things down: briefs, decisions and handovers, so nobody has to guess.',
+  'We give clients honest advice, and we expect the same from each other.',
+  ...(forms.workingArrangements ? [forms.workingArrangements] : []),
+];
+const lookFor = [
+  'Care for craft, shown in work you can point to.',
+  'Clear written and spoken communication in English and Urdu.',
+  'Curiosity about how your work connects to the rest of the project.',
+  'Reliability: doing what you said, when you said you would.',
+];
+---
+<Base path="/careers">
+  <PageHero title="Careers" intro="Join a team where designers, developers, video makers and AI specialists build one connected result." crumb="Careers" />
+
+  <section aria-label="How we work and what we look for" class="section">
+    <div class="container split">
+      <div>
+        <h2 class="h2 mb20">How we work</h2>
+        <ul class="ticks">{howWeWork.map((t) => <li><span aria-hidden="true"></span>{t}</li>)}</ul>
+      </div>
+      <div>
+        <h2 class="h2 mb20">What we look for</h2>
+        <ul class="ticks">{lookFor.map((t) => <li><span aria-hidden="true"></span>{t}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="or-h" class="section no-top">
+    <div class="container">
+      <h2 id="or-h" class="h2 mb28">Open roles</h2>
+      {jobs.length > 0 ? (
+        <div class="roles">
+          {jobs.map((j) => (
+            <div class="role">
+              <h3>{j.title}</h3>
+              <p>{j.meta}</p>
+              {formReady && <a href="#apply" class="text-link" data-role={j.title}>Apply for this role</a>}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="empty">
+          <p class="empty-h">No open roles right now</p>
+          {formReady && <p class="m0">You are welcome to send a general application using the form below.</p>}
+        </div>
+      )}
+    </div>
+  </section>
+
+  {formReady && (
+    <section id="apply" aria-labelledby="ap-h" class="section no-top">
+      <div class="blueprint apply">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <h2 id="ap-h" class="ap-h">Apply</h2>
+        <div role="status" class="done" data-done hidden>
+          <p class="done-h">Thank you for applying.</p>
+          <p>We have received your application. We review every application and will reply if your experience matches the role.</p>
+          <a href="/work" class="text-link">See the kind of work we do</a>
+        </div>
+        <form method="post" enctype="multipart/form-data" action={`https://formsubmit.co/${forms.careersFormsubmit}`} novalidate class="aform" data-apply>
+          <p class="full small">Fields marked * are required.</p>
+          <div class="form-alert full" role="alert" data-summary hidden></div>
+          <input type="hidden" name="_subject" value="New job application from the website" />
+          <input type="hidden" name="_next" value={nextUrl} />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div class="field"><label for="a-name">Full name *</label><input id="a-name" name="name" class="input" autocomplete="name" required aria-describedby="a-name-e" /><p id="a-name-e" class="field-error"></p></div>
+          <div class="field"><label for="a-email">Email *</label><input id="a-email" name="email" class="input" type="email" autocomplete="email" required aria-describedby="a-email-e" /><p id="a-email-e" class="field-error"></p></div>
+          <div class="field"><label for="a-phone">Phone *</label><input id="a-phone" name="phone" class="input" type="tel" autocomplete="tel" required aria-describedby="a-phone-e" /><p id="a-phone-e" class="field-error"></p></div>
+          <div class="field"><label for="a-role">Role *</label><select id="a-role" name="role" class="input" required aria-describedby="a-role-e"><option value="">Choose a role</option>{roleOpts.map((o) => <option>{o}</option>)}</select><p id="a-role-e" class="field-error"></p></div>
+          <div class="field full"><label for="a-port">Portfolio link</label><input id="a-port" name="portfolio" class="input" type="url" placeholder="https://" aria-describedby="a-port-e" /><p id="a-port-e" class="field-error"></p></div>
+          <div class="field full">
+            <label for="a-cv">CV * <span class="normal">(PDF or Word, up to 5 MB)</span></label>
+            <label for="a-cv" class="file" data-file-box><span class="btn btn-secondary file-btn" aria-hidden="true">Choose file</span><span data-file-name>No file chosen</span></label>
+            <input id="a-cv" name="attachment" type="file" accept=".pdf,.doc,.docx" class="file-input" required aria-describedby="a-cv-e" />
+            <p id="a-cv-e" class="field-error"></p>
+          </div>
+          <div class="field full"><label for="a-msg">Message</label><textarea id="a-msg" name="message" class="input" rows="4"></textarea></div>
+          <div class="full"><label class="check"><input type="checkbox" id="a-ok" name="consent" value="Yes" required aria-describedby="a-ok-e" /><span>I agree that my application may be stored {forms.applicationRetention ? `for ${forms.applicationRetention} ` : ''}as described in the <a href="/privacy">Privacy Policy</a>. *</span></label><p id="a-ok-e" class="field-error"></p></div>
+          <div class="full"><button type="submit" class="btn btn-primary" data-submit>Send application</button></div>
+        </form>
+      </div>
+    </section>
+  )}
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-apply]');
+  if (form) {
+    const done = document.querySelector<HTMLElement>('[data-done]')!;
+    if (new URLSearchParams(location.search).get('applied') === '1') { form.hidden = true; done.hidden = false; }
+    const summary = form.querySelector<HTMLElement>('[data-summary]')!;
+    const F = ['name', 'email', 'phone', 'role', 'port', 'cv', 'ok'] as const;
+    type K = (typeof F)[number];
+    const el = (k: K) => document.getElementById(`a-${k}`) as HTMLInputElement;
+    const fileName = form.querySelector<HTMLElement>('[data-file-name]')!;
+    const fileBox = form.querySelector<HTMLElement>('[data-file-box]')!;
+    const check = (k: K): string => {
+      const i = el(k); const s = (i.value || '').trim();
+      if (k === 'name' && !s) return 'Please enter your full name.';
+      if (k === 'email') { if (!s) return 'Please enter your email address.'; if (!/^\S+@\S+\.\S+$/.test(s)) return 'Please enter a valid email address.'; }
+      if (k === 'phone' && s.replace(/\D/g, '').length < 10) return 'Please enter a full phone number.';
+      if (k === 'role' && !s) return 'Please choose a role.';
+      if (k === 'port' && s && !/^https?:\/\/\S+\.\S+/.test(s)) return 'Please enter a full link starting with https://';
+      if (k === 'cv') { const f = i.files?.[0]; if (!f) return 'Please attach your CV.'; if (f.size > 5 * 1024 * 1024) return 'This file is larger than 5 MB. Please attach a smaller file.'; if (!/\.(pdf|docx?)$/i.test(f.name)) return 'Please attach a PDF or Word document.'; }
+      if (k === 'ok' && !i.checked) return 'Please confirm you agree.';
+      return '';
+    };
+    const show = (k: K, m: string) => { el(k).setAttribute('aria-invalid', m ? 'true' : 'false'); document.getElementById(`a-${k}-e`)!.textContent = m; if (k === 'cv') fileBox.classList.toggle('bad', !!m); };
+    el('cv').addEventListener('change', () => { fileName.textContent = el('cv').files?.[0]?.name ?? 'No file chosen'; show('cv', check('cv')); });
+    F.forEach((k) => el(k).addEventListener('change', () => { if (el(k).getAttribute('aria-invalid') === 'true') show(k, check(k)); }));
+    document.querySelectorAll<HTMLAnchorElement>('[data-role]').forEach((a) => a.addEventListener('click', () => { el('role').value = a.dataset.role!; }));
+    form.addEventListener('submit', (e) => {
+      const bad = F.map((k) => [k, check(k)] as const).filter(([, m]) => m);
+      F.forEach((k) => show(k, check(k)));
+      if (bad.length) {
+        e.preventDefault();
+        summary.hidden = false;
+        summary.textContent = bad.length === 1 ? 'Please correct the highlighted field below.' : `Please correct the ${bad.length} highlighted fields below.`;
+        el(bad[0][0]).focus();
+        return;
+      }
+      const b = form.querySelector<HTMLButtonElement>('[data-submit]')!; b.disabled = true; b.textContent = 'Sending';
+    });
+  }
+</script>
+
+<style>
+  .mb20 { margin: 0 0 20px; }
+  .mb28 { margin: 0 0 28px; }
+  .m0 { margin: 0; }
+  .ticks { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 16px; font-size: 17px; }
+  .ticks li { display: flex; gap: 14px; }
+  .ticks span { width: 14px; height: 1px; background: #0E9F6E; margin-top: 14px; flex-shrink: 0; }
+  .roles { border-top: 1px solid var(--color-divider); }
+  .role { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 8px 24px; align-items: center; padding: 22px 0; border-bottom: 1px solid var(--color-divider); }
+  .role h3 { margin: 0; font-size: 19px; }
+  .role p { margin: 0; font-size: 15px; }
+  .empty { padding: 40px clamp(20px, 4vw, 40px); border: 1px dashed var(--color-divider); text-align: center; }
+  .empty-h { margin: 0 0 6px; font: 600 20px var(--font-heading); color: #0B1F3A; }
+  .apply { max-width: 900px; margin: 0 auto; padding: clamp(20px, 4vw, 48px); scroll-margin-top: 96px; }
+  .ap-h { margin: 0 0 6px; font-size: clamp(26px, 3vw, 36px); }
+  .aform { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 20px; margin-top: 20px; }
+  .aform[hidden] { display: none; }
+  .full { grid-column: 1 / -1; }
+  .small { margin: 0; font-size: 14px; }
+  .normal { font-weight: 400; }
+  .file { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 16px; border: 1px dashed color-mix(in srgb, #334155 40%, transparent); cursor: pointer; }
+  .file:hover { border-color: #0E9F6E; }
+  .file.bad { border-color: #B42318; }
+  .file-btn { pointer-events: none; }
+  .file-input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .field:has(.file-input:focus-visible) .file { outline: 2px solid #0E9F6E; outline-offset: 2px; }
+  .done { margin-top: 20px; padding: 24px; border: 1px solid #0E9F6E; background: rgba(14,159,110,.07); }
+  .done-h { margin: 0 0 6px; font: 600 20px var(--font-heading); color: #0B1F3A; }
+</style>

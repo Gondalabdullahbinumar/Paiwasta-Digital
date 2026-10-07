@@ -1,0 +1,132 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { business, contact, founder, founderReady } from '../data/site';
+
+const values = [
+  ['Connected work', 'We plan every service with the others in mind, so each piece strengthens the rest.'],
+  ['Clear communication', 'One named contact, plain language and regular updates you do not have to ask for.'],
+  ['Honest advice', 'We recommend what your business needs, including when that is less than you expected.'],
+  ['Craft', 'Careful design, clean code and well-made videos that hold up over years of use.'],
+  ['Long-term partnership', 'Our work continues after launch through Care plans, reviews and steady improvement.'],
+];
+// Founder photo (optional): put the file in src/assets/ and name it in site.ts.
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/*.{jpg,jpeg,png,webp}', { eager: true });
+const founderPhoto = founder.photo ? photos[`../assets/${founder.photo}`]?.default : undefined;
+import { Image } from 'astro:assets';
+---
+<Base path="/about" current="about">
+  <PageHero title="One team for your whole online presence" intro={`We design, build and automate the digital side of growing businesses in ${business.markets}.`} crumb="About" />
+
+  <section aria-labelledby="nm-h" class="section">
+    <div class="container split center">
+      <div class="blueprint urdu-box" data-reveal>
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <p lang="ur" dir="rtl" class="urdu">پیوستہ</p>
+        <p class="urdu-cap">Paiwasta · joined, inseparable</p>
+      </div>
+      <div data-reveal>
+        <p class="eyebrow">The meaning of the name</p>
+        <h2 id="nm-h" class="h2 mb18">Joined so closely the parts do not come apart</h2>
+        <p class="lead">Paiwasta (<span lang="ur" dir="rtl">پیوستہ</span>) is an Urdu word for things joined so closely that they hold as one. It describes what we build for clients: a brand, website, software, videos and AI assistants that are designed together and work as a single system.</p>
+        <p class="lead m0">It also describes how we work with clients: one long-term relationship rather than a series of separate jobs.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pb-h" class="section navy">
+    <div class="container split">
+      <div><p class="eyebrow">The problem we solve</p><h2 id="pb-h" class="h2">Digital work bought in pieces rarely fits together</h2></div>
+      <div data-reveal class="pb-body">
+        <p>Many businesses hire a designer for the logo, a developer for the website, a freelancer for videos and someone else for social media. Each vendor does their part, but nobody is responsible for how the parts work together.</p>
+        <p>The result is a brand that looks different on every platform, a website that does not match the videos, and enquiries that slip between systems. The owner becomes the project manager, chasing five people for one result.</p>
+        <p class="strong-white">Paiwasta replaces those five vendors with one accountable team that plans, builds and looks after everything together.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="mv-h" class="section">
+    <div class="container">
+      <h2 id="mv-h" class="sr-only">Mission and vision</h2>
+      <div class="grid-auto" style="--min:340px">
+        <div class="card blueprint mv" data-reveal><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><span class="card-kicker">Mission</span><p class="mv-text">To give growing businesses a complete, connected digital presence that brings in customers and saves time.</p></div>
+        <div class="card blueprint mv" data-reveal><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><span class="card-kicker">Vision</span><p class="mv-text">To be the technology partner Pakistani businesses trust first, and a team international clients choose for quality.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="vl-h" class="section no-top">
+    <div class="container">
+      <h2 id="vl-h" class="h2 vl-h">Our values</h2>
+      <div class="grid-auto" style="--min:210px; gap:20px">
+        {values.map(([t, d], i) => (
+          <div class="card blueprint" data-reveal><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><span class="card-kicker">0{i + 1}</span><h3 class="card-title">{t}</h3><p class="card-body">{d}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {founderReady && (
+    <section aria-labelledby="fd-h" class="section no-top">
+      <div class="container fd-grid">
+        {founderPhoto && (
+          <div class="blueprint fd-photo">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <Image src={founderPhoto} alt={`${founder.name}, ${founder.title} of Paiwasta Technologies`} widths={[320, 480, 840]} sizes="(max-width: 700px) 90vw, 420px" loading="lazy" />
+          </div>
+        )}
+        <div data-reveal>
+          <p class="eyebrow">Founder</p>
+          <h2 id="fd-h" class="h2 fd-name">{founder.name}</h2>
+          <p class="fd-title">{founder.title}</p>
+          <p class="lead fd-bio">{founder.bio}</p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section aria-labelledby="fc-h" class="section no-top">
+    <div class="facts">
+      <h2 id="fc-h" class="h2 fc-h">Company facts</h2>
+      <div class="table-wrap" role="region" aria-label="Company facts" tabindex="0">
+        <table class="table facts-t"><tbody>
+          <tr><th scope="row">Name</th><td>{business.legalName ?? business.name}</td></tr>
+          {business.foundedYear && <tr><th scope="row">Founded</th><td>{business.foundedYear}</td></tr>}
+          <tr><th scope="row">Head office</th><td>{contact.address ?? `${business.city}, ${business.country}`}</td></tr>
+          <tr><th scope="row">Markets served</th><td>{business.markets}</td></tr>
+          <tr><th scope="row">Contact</th><td>
+            {contact.email && <><a href={`mailto:${contact.email}`}>{contact.email}</a> · </>}
+            {contact.phone && <><a href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`}>{contact.phone}</a> · </>}
+            <a href="/contact">Contact page</a>
+          </td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .center { align-items: center; }
+  .urdu-box { padding: clamp(24px, 4vw, 56px); text-align: center; }
+  .urdu { margin: 0; font-size: clamp(84px, 14vw, 180px); line-height: 1.9; color: #0B1F3A; text-align: center; }
+  .urdu-cap { margin: 0; font: 500 13px var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: #0A7A55; }
+  .mb18 { margin: 0 0 18px; }
+  .m0 { margin: 0; }
+  .lead { margin: 0 0 14px; }
+  .pb-body { color: rgba(247,249,251,.84); font-size: 17px; }
+  .pb-body p { margin: 0 0 16px; }
+  .strong-white { color: #F7F9FB; margin: 0 !important; }
+  .mv { padding: clamp(28px, 4vw, 48px); }
+  .mv-text { margin: 0; font: 600 clamp(20px, 2.2vw, 26px)/1.4 var(--font-heading); color: #0B1F3A; }
+  .vl-h { margin: 0 0 32px; }
+  .fd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 40px 64px; align-items: center; }
+  .fd-photo { max-width: 420px; width: 100%; }
+  .fd-photo :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .fd-name { margin: 0 0 6px; }
+  .fd-title { margin: 0 0 20px; font-weight: 600; color: #0A7A55; }
+  .fd-bio { max-width: 60ch; }
+  .facts { max-width: 900px; margin: 0 auto; }
+  .fc-h { margin: 0 0 24px; }
+  .facts-t { min-width: 300px; }
+  .facts-t th { width: 34%; }
+</style>

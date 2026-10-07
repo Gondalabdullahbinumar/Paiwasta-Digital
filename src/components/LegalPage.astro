@@ -1,0 +1,44 @@
+---
+// Legal page layout: contents list and numbered sections.
+import PageHero from './PageHero.astro';
+import { legalUpdated } from '../data/site';
+interface Props { title: string; intro: string; sections: { h: string; p: string[] }[] }
+const { title, intro, sections } = Astro.props;
+---
+<PageHero title={title} intro={intro} crumb={title} />
+<div class="section-tight">
+  <div class="legal">
+    <nav aria-label="Contents" class="blueprint toc">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <p class="toc-h">Contents</p>
+      <ol>{sections.map((s, i) => <li><a href={`#s${i + 1}`}><span>{i + 1}.</span>{s.h}</a></li>)}</ol>
+      <p class="updated">Last updated: {legalUpdated}</p>
+    </nav>
+    <div class="body">
+      <p class="note">This is a plain-language summary of how we work. The full text will be reviewed by a lawyer, and your written agreement with us always takes priority.</p>
+      {sections.map((s, i) => (
+        <section id={`s${i + 1}`}>
+          <h2><span class="num">{i + 1}.</span> {s.h}</h2>
+          {s.p.map((p) => <p set:html={p} />)}
+        </section>
+      ))}
+    </div>
+  </div>
+</div>
+<style>
+  .legal { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 40px 64px; align-items: start; }
+  @media (min-width: 900px) { .legal { grid-template-columns: 260px 1fr; } .toc { position: sticky; top: calc(var(--header-h) + 24px); } }
+  .toc { padding: 24px; }
+  .toc-h { margin: 0 0 10px; font: 600 12px var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: #0B1F3A; }
+  .toc ol { list-style: none; margin: 0; padding: 0; }
+  .toc a { display: flex; gap: 10px; align-items: center; min-height: 40px; text-decoration: none; color: #334155; font-size: 15px; }
+  .toc a:hover { color: #0A7A55; }
+  .toc a span { color: #0A7A55; font-weight: 600; min-width: 22px; }
+  .updated { margin: 16px 0 0; font-size: 13px; }
+  .body { min-width: 0; max-width: 720px; font-size: 17px; }
+  .note { margin: 0 0 36px; color: #6B4F0B; background: rgba(212,167,44,.12); padding: 12px 16px; border-left: 2px solid #D4A72C; font-size: 15px; }
+  section { padding: 0 0 36px; }
+  h2 { margin: 0 0 12px; font-size: clamp(22px, 2.4vw, 28px); }
+  .num { color: #0E9F6E; }
+  section :global(p) { margin: 0 0 12px; }
+</style>

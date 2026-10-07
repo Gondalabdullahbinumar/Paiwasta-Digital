@@ -1,0 +1,114 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Rings from '../components/Rings.astro';
+import { getCollection } from 'astro:content';
+import { services, byKey } from '../data/site';
+
+const cases = (await getCollection('caseStudies', (c) => c.data.clientApproved)).sort((a, b) => a.data.order - b.data.order);
+// Filters only appear once there are enough real projects to make them useful.
+const showFilters = cases.length >= 4;
+const industries = [...new Set(cases.map((c) => c.data.industry))];
+const usedServices = services.filter((s) => cases.some((c) => c.data.services.includes(s.key)));
+---
+<Base path="/work" current="work">
+  <PageHero title="Selected work" intro="Projects where design, web, software, video and AI were planned as one." crumb="Work" />
+  <section aria-labelledby="wk-h" class="section-tight">
+    <div class="container">
+      <h2 id="wk-h" class="sr-only">Case studies</h2>
+      {cases.length === 0 ? (
+        <div class="blueprint empty">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div class="empty-rings"><Rings max="240px" decorative /></div>
+          <h3>Our first case studies are being prepared</h3>
+          <p>We publish a project here only once the client has approved it, with real results. In the meantime, we are happy to talk you through how we would approach your project.</p>
+          <div class="empty-actions">
+            <a class="btn btn-primary" href="/contact">Book a free consultation</a>
+            <a class="text-link" href="/process">See how we work</a>
+          </div>
+        </div>
+      ) : (
+        <>
+          {showFilters && (
+            <div class="filters" data-filters>
+              <div role="group" aria-label="Filter by service" class="f-row">
+                <span class="f-label">Service</span>
+                <button type="button" aria-pressed="true" data-f="svc" data-v="all">All</button>
+                {usedServices.map((s) => <button type="button" aria-pressed="false" data-f="svc" data-v={s.key}>{s.name}</button>)}
+              </div>
+              {industries.length > 1 && (
+                <div role="group" aria-label="Filter by industry" class="f-row">
+                  <span class="f-label">Industry</span>
+                  <button type="button" aria-pressed="true" data-f="ind" data-v="all">All</button>
+                  {industries.map((i) => <button type="button" aria-pressed="false" data-f="ind" data-v={i}>{i}</button>)}
+                </div>
+              )}
+              <p aria-live="polite" class="count" data-count>Showing {cases.length} projects</p>
+            </div>
+          )}
+          <div class="grid-auto" style="--min:320px" data-grid>
+            {cases.map((c) => (
+              <a href={`/work/${c.id}`} class="card blueprint case" data-svc={c.data.services.join(' ')} data-ind={c.data.industry}>
+                <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                <span class="card-kicker">{c.data.client} · {c.data.industry}</span>
+                <h3 class="card-title">{c.data.title}</h3>
+                <p class="card-body">{c.data.summary}</p>
+                <div class="tags">{c.data.services.map((k) => <span class="tag tag-accent">{byKey[k].name}</span>)}</div>
+              </a>
+            ))}
+          </div>
+          <div class="blueprint none" data-none hidden>
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <h3>No projects match these filters yet</h3>
+            <p>Try another service or industry, or ask us about work in your sector.</p>
+            <button type="button" class="btn btn-secondary" data-reset>Clear filters</button>
+          </div>
+        </>
+      )}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const box = document.querySelector('[data-filters]');
+  if (box) {
+    const state: Record<string, string> = { svc: 'all', ind: 'all' };
+    const cards = [...document.querySelectorAll<HTMLElement>('[data-grid] > a')];
+    const none = document.querySelector<HTMLElement>('[data-none]')!;
+    const count = document.querySelector<HTMLElement>('[data-count]')!;
+    const apply = () => {
+      let n = 0;
+      cards.forEach((c) => {
+        const ok = (state.svc === 'all' || c.dataset.svc!.split(' ').includes(state.svc)) && (state.ind === 'all' || c.dataset.ind === state.ind);
+        c.hidden = !ok; if (ok) n++;
+      });
+      none.hidden = n > 0;
+      count.textContent = n === 1 ? 'Showing 1 project' : `Showing ${n} projects`;
+      box.querySelectorAll<HTMLButtonElement>('button[data-f]').forEach((b) => b.setAttribute('aria-pressed', String(state[b.dataset.f!] === b.dataset.v)));
+    };
+    box.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-f]'); if (!b) return;
+      state[b.dataset.f!] = b.dataset.v!; apply();
+    });
+    document.querySelector('[data-reset]')?.addEventListener('click', () => { state.svc = 'all'; state.ind = 'all'; apply(); });
+  }
+</script>
+
+<style>
+  .empty { border-style: dashed; padding: clamp(40px, 6vw, 72px) clamp(20px, 5vw, 72px); text-align: center; max-width: 900px; margin: 0 auto; }
+  .empty-rings { width: min(240px, 80%); margin: 0 auto 28px; background: #0B1F3A; padding: 20px; }
+  .empty h3 { margin: 0 0 12px; font-size: clamp(22px, 2.6vw, 28px); }
+  .empty p { margin: 0 auto 24px; max-width: 56ch; }
+  .empty-actions { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: center; align-items: center; }
+  .filters { display: flex; flex-direction: column; gap: 18px; margin-bottom: 40px; }
+  .f-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .f-label { font: 600 12px var(--font-body); letter-spacing: .14em; text-transform: uppercase; width: 84px; }
+  .f-row button { min-height: 44px; padding: 0 16px; border: 1px solid var(--color-divider); background: transparent; color: #334155; font: 500 14px var(--font-body); cursor: pointer; }
+  .f-row button:hover { border-color: #0E9F6E; }
+  .f-row button[aria-pressed='true'] { border-color: #0E9F6E; background: #0B1F3A; color: #F7F9FB; }
+  .count { margin: 0; font-size: 14px; }
+  .case[hidden] { display: none; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .none { border-style: dashed; padding: clamp(40px, 6vw, 72px); text-align: center; }
+  .none h3 { margin: 0 0 10px; font-size: 22px; }
+</style>

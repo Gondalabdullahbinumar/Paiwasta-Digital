@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Faq from '../components/Faq.astro';
+import { processSteps, faqs } from '../data/site';
+---
+<Base path="/process">
+  <PageHero title="How we work, step by step" intro="Six connected steps, so you always know what is happening, what we need from you and what comes next." crumb="Process" />
+
+  <section aria-labelledby="tl-h" class="section">
+    <div class="wrap">
+      <h2 id="tl-h" class="h2 tl-h">Six steps</h2>
+      <div class="tl">
+        <span data-draw aria-hidden="true" class="tl-line"></span>
+        <ol>
+          {processSteps.map((s, i) => (
+            <li data-reveal>
+              <span aria-hidden="true" class="tl-n">0{i + 1}</span>
+              <h3>{s.name}</h3>
+              <p class="happens">{s.happens}</p>
+              <div class="grid-auto" style="--min:260px; gap:16px">
+                <div class="card blueprint box"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><span class="card-kicker">You provide</span><p>{s.provide}</p></div>
+                <div class="card blueprint box recv"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><span class="card-kicker">You receive</span><p>{s.receive}</p></div>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="tf-h" class="section no-top">
+    <div class="container faq-grid faq-layout">
+      <div><h2 id="tf-h" class="h2 tf-h">Questions about timelines</h2><a href="/faq" class="text-link">All questions</a></div>
+      <div class="faq-col"><Faq items={faqs.timelines.items} /></div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  .tl-h { margin: 0 0 48px; }
+  .tl { position: relative; }
+  .tl-line { position: absolute; left: 21px; top: 0; bottom: 0; width: 1px; background: #0E9F6E; }
+  ol { margin: 0; padding: 0; list-style: none; }
+  li { position: relative; padding: 0 0 56px 72px; }
+  .tl-n { position: absolute; left: 0; top: 0; width: 43px; height: 43px; border-radius: 50%; background: #F7F9FB; border: 1px solid #0E9F6E; display: flex; align-items: center; justify-content: center; font: 600 14px var(--font-heading); color: #0A7A55; }
+  h3 { margin: 6px 0 8px; font-size: clamp(22px, 2.4vw, 28px); }
+  .happens { margin: 0 0 20px; font-size: 17px; max-width: 62ch; }
+  .box { padding: 20px; }
+  .box p { margin: 0; font-size: 15px; }
+  .recv { border-color: #4DC296; }
+  @media (max-width: 480px) { li { padding-left: 60px; } }
+  .faq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 32px 64px; }
+  .tf-h { margin: 0 0 8px; }
+  .faq-col { min-width: 0; max-width: 820px; }
+</style>

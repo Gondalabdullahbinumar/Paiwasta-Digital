@@ -65,6 +65,13 @@ export const forms = {
   workingArrangements: null as string | null,
 };
 
+// Open roles on the Careers page. Leave empty to show "No open roles right now".
+// Example: { title: 'Front-end developer', meta: 'Islamabad · Full-time' }
+export const jobs: { title: string; meta: string }[] = [];
+
+// Date shown as "Last updated" on the Privacy Policy and Terms of Service.
+export const legalUpdated = '7 October 2026';
+
 // Switches for parts of the site that are hidden until they are ready.
 export const features = {
   chat: false, // AI assistant demo bubble. Keep false until a real assistant is connected.
