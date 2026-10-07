@@ -1,0 +1,181 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Faq from '../components/Faq.astro';
+import { packages, care, careTerms, compare, services, serviceHref, faqs, business } from '../data/site';
+---
+<Base path="/pricing" current="pricing">
+  <PageHero title="Clear starting prices" intro="All prices are starting prices in Pakistani rupees. Your final quote follows a free discovery call." crumb="Pricing" />
+
+  <section aria-labelledby="pk-h" class="section">
+    <div class="container">
+      <h2 id="pk-h" class="h2 pk-h">Packages</h2>
+      <div class="grid-auto" style="--min:320px">
+        {packages.map((p) => (
+          <article class="card blueprint pkg" data-reveal style={p.featured ? 'border-color:#0E9F6E' : ''}>
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div class="pkg-top"><h3 class="pkg-name">{p.name}</h3>{p.featured && <span class="tag tag-accent">Adds video and AI</span>}</div>
+            <p class="pkg-price">{p.from}</p>
+            {p.extra && <p class="pkg-extra">{p.extra}</p>}
+            <p class="m0">{p.summary}</p>
+            <ul class="inc">
+              {p.includes.map((i) => <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="1.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>{i}</li>)}
+            </ul>
+            <dl class="pkg-dl">
+              <dt>Suits</dt><dd>{p.suits}</dd>
+              <dt>Timeline</dt><dd>{p.timeline}</dd>
+            </dl>
+            <a class="btn btn-primary" href="/contact">Book a free consultation</a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="cr-h" class="section navy care-sec">
+    <div class="container">
+      <div class="head-row">
+        <div><p class="eyebrow">After launch</p><h2 id="cr-h" class="h2">Care plans</h2></div>
+        <fieldset class="seg">
+          <legend class="sr-only">Billing period</legend>
+          <label class="seg-opt"><input type="radio" name="bill" value="month" checked />Monthly</label>
+          <label class="seg-opt"><input type="radio" name="bill" value="quarter" />Quarterly</label>
+        </fieldset>
+      </div>
+      <div class="grid-auto care-grid">
+        {care.map((c) => (
+          <article class="card blueprint care-card">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <h3 class="care-name">{c.name}</h3>
+            <p class="care-price">
+              <span class="per-month">{c.month}<span class="per"> per month</span></span>
+              <span class="per-quarter">{c.quarter}<span class="per"> per quarter</span></span>
+            </p>
+            <ul class="care-items">{c.items.map((i) => <li><span aria-hidden="true"></span>{i}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+      <p class="sr-only" aria-live="polite" data-bill-status></p>
+      <div class="terms">
+        <h3>Care plan terms</h3>
+        <ul>{careTerms.map((t) => <li>{t}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="cmp-h" class="section">
+    <div class="container">
+      <h2 id="cmp-h" class="h2 cmp-h">Compare the packages</h2>
+      <div class="table-wrap cmp-wrap" role="region" aria-label="Package comparison, scrolls sideways on small screens" tabindex="0">
+        <table class="table cmp">
+          <thead><tr><th scope="col">Included</th><th scope="col">Starter</th><th scope="col">Growth</th><th scope="col">Complete</th></tr></thead>
+          <tbody>{compare.map(([a, b, c, d]) => <tr><th scope="row">{a}</th><td>{b}</td><td>{c}</td><td>{d}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-h" class="section no-top">
+    <div class="container">
+      <h2 id="sg-h" class="h2 sg-h">Single services</h2>
+      <p class="sg-intro">Prefer to start with one service? These are the starting prices for each.</p>
+      <div class="grid-auto" style="--min:340px">
+        {services.map((s) => (
+          <div class="card blueprint">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <h3 class="single-h"><a href={serviceHref(s)}>{s.name}</a></h3>
+            <div class="table-wrap">
+              <table class="table single"><tbody>{s.prices.map(([a, b]) => <tr><td>{a}</td><td class="sp">{b}</td></tr>)}</tbody></table>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pay-h" class="section no-top">
+    <div class="container pay-grid">
+      <div>
+        <h2 id="pay-h" class="h2 pay-h">How payment works</h2>
+        <ol class="timeline">
+          <li><span class="tl-dot" aria-hidden="true"></span><h3>Deposit</h3><p>You pay a {business.depositPercent}% deposit to begin work.</p></li>
+          <li><span class="tl-dot" aria-hidden="true"></span><h3>Milestones</h3><p>Work is delivered in milestones, each reviewed and approved by you.</p></li>
+          <li><span class="tl-dot" aria-hidden="true"></span><h3>Balance at launch</h3><p>The balance is due at launch, and your Care plan begins that day.</p></li>
+        </ol>
+      </div>
+      <div class="card blueprint note">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <span class="card-kicker">A note on quotes</span>
+        <p class="note-text">Every price on this page is a starting price. We confirm a fixed quote in writing after a free discovery call, before any work begins.</p>
+        <a class="btn btn-primary note-btn" href="/contact">Book a free discovery call</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pf-h" class="section no-top">
+    <div class="container faq-grid faq-layout">
+      <div><h2 id="pf-h" class="h2 pf-h">Pricing questions</h2><a href="/faq" class="text-link">All questions</a></div>
+      <div class="faq-col"><Faq items={faqs.pricing.items} /></div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const status = document.querySelector<HTMLElement>('[data-bill-status]');
+  document.querySelectorAll<HTMLInputElement>('input[name="bill"]').forEach((r) =>
+    r.addEventListener('change', () => { if (status) status.textContent = r.value === 'quarter' ? 'Showing quarterly prices' : 'Showing monthly prices'; }));
+</script>
+
+<style>
+  .pk-h { margin: 0 0 40px; }
+  .pkg { padding: clamp(24px, 3vw, 36px); }
+  .pkg-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .pkg-name { margin: 0; font-size: 26px; }
+  .pkg-price { margin: 0; font: 600 28px/1.2 var(--font-heading); color: #0B1F3A; }
+  .pkg-extra { margin: 0; font-size: 14px; color: #0A7A55; }
+  .m0 { margin: 0; }
+  .inc { margin: 8px 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .inc li { display: flex; gap: 10px; font-size: 15px; }
+  .inc svg { flex-shrink: 0; margin-top: 4px; }
+  .pkg-dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; padding-top: 16px; border-top: 1px solid var(--color-divider); }
+  .pkg-dl dt { font-weight: 600; color: #0B1F3A; }
+  .pkg-dl dd { margin: 0; }
+  .pkg .btn { margin-top: 12px; }
+  .care-card { padding: clamp(24px, 3vw, 32px); }
+  .care-name { margin: 0; font-size: 22px; }
+  .care-price { margin: 0; font: 600 26px/1.2 var(--font-heading); color: #3FCF9A; }
+  .per { font: 400 14px var(--font-body); color: #C3D1DE; }
+  .per-quarter { display: none; }
+  .care-sec:has(input[value='quarter']:checked) .per-quarter { display: inline; }
+  .care-sec:has(input[value='quarter']:checked) .per-month { display: none; }
+  .care-items { margin: 8px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .care-items li { display: flex; gap: 10px; font-size: 15px; color: rgba(247,249,251,.86); }
+  .care-items span { width: 12px; height: 1px; background: #0E9F6E; margin-top: 12px; flex-shrink: 0; }
+  .seg { color: #F7F9FB; border-color: rgba(247,249,251,.3); }
+  .terms { margin-top: 40px; padding: 24px; border: 1px solid rgba(247,249,251,.16); }
+  .terms h3 { margin: 0 0 12px; font-size: 18px; }
+  .terms ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; color: rgba(247,249,251,.82); font-size: 15px; }
+  .cmp-h { margin: 0 0 32px; }
+  .cmp-wrap { border: 1px solid var(--color-divider); }
+  .cmp { min-width: 640px; }
+  .sg-h { margin: 0 0 12px; }
+  .sg-intro { margin: 0 0 32px; max-width: 60ch; }
+  .single-h { margin: 0; font-size: 20px; }
+  .single-h a { color: #0B1F3A; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+  .single-h a:hover { color: #0A7A55; text-decoration: underline; }
+  .single td:first-child { padding-left: 0; }
+  .sp { font-weight: 600; color: #0B1F3A; text-align: right !important; }
+  .pay-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 40px 64px; }
+  .pay-h { margin: 0 0 28px; }
+  .timeline { margin: 0; padding: 0; list-style: none; border-left: 1px solid #0E9F6E; display: flex; flex-direction: column; gap: 24px; }
+  .timeline li { padding-left: 24px; position: relative; }
+  .tl-dot { position: absolute; left: -6px; top: 6px; width: 11px; height: 11px; border-radius: 50%; background: #F7F9FB; border: 1px solid #0E9F6E; }
+  .timeline h3 { margin: 0 0 4px; font-size: 18px; }
+  .timeline p { margin: 0; }
+  .note { padding: clamp(24px, 3vw, 36px); align-self: start; border-color: #0E9F6E; }
+  .note-text { margin: 0; font: 600 20px/1.4 var(--font-heading); color: #0B1F3A; }
+  .note-btn { align-self: flex-start; margin-top: 8px; }
+  .faq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 32px 64px; }
+  .pf-h { margin: 0 0 8px; }
+  .faq-col { min-width: 0; max-width: 820px; }
+</style>
