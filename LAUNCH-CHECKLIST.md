@@ -9,7 +9,7 @@ A value of `null` means "not supplied yet", and the website hides that item auto
 | # | What | Why | How to switch it on |
 |---|---|---|---|
 | 1 | **Web3Forms key for the contact form** | Without it, consultation requests are not delivered. The live build refuses to publish without it. | Go to web3forms.com, enter the email address that should receive enquiries, and copy the access key from the email you receive. Paste it into `forms.web3formsKey` in `src/data/site.ts`. |
-| 2 | **WhatsApp number** | Until it is set, every WhatsApp button is hidden: the floating button, the menu, the call-to-action bands and Contact. | Set `contact.whatsapp` (digits only, international format, e.g. `923001234567`) and `contact.whatsappLabel` (how it is shown, e.g. `+92 300 1234567`). |
+| 2 | **WhatsApp number** | Done: +92 333 6187564 (also used as the phone number). | — |
 | 3 | **Careers form email (FormSubmit)** | Until it is set, the application form is hidden and Careers shows "No open roles right now" only. | Set `forms.careersFormsubmit` to the email that should receive applications. The first application triggers a confirmation email from FormSubmit: click its link once. Then send a test application with a small PDF to confirm the CV arrives. |
 | 4 | **Vercel project name** | Done: the address is `https://paiwasta-digital.vercel.app`. If you add your own domain later, change `SITE_URL` in `astro.config.mjs`. | — |
 | 5 | **Approve the interim Privacy Policy and Terms of Service** | I drafted short plain-language versions from the facts in your profile. They are not legal advice. | Read `/privacy` and `/terms`. Both pages are **kept out of Google** until a lawyer reviews them. To include them afterwards, remove `noindex` in `src/pages/privacy.astro` and `src/pages/terms.astro`, and add `'/privacy', '/terms'` to the list in `src/pages/sitemap.xml.ts`. |
@@ -19,7 +19,6 @@ A value of `null` means "not supplied yet", and the website hides that item auto
 
 | Item | Where it appears | How to switch it on |
 |---|---|---|
-| Phone number | Footer, Contact, About facts, Privacy | `contact.phone` |
 | Email address (on your own domain) | Footer, Contact, About facts, Privacy | `contact.email` |
 | Office street address | Footer, Contact, About facts, Google structured data | `contact.address`. Until it is set, these places show "Islamabad, Pakistan". |
 | Office hours | Footer, Contact | `contact.hours` |

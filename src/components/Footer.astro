@@ -66,10 +66,10 @@ const hasContactLines = !!(whatsappUrl || contact.phone || contact.email || cont
     <span class="ft-legal"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></span>
   </div>
 </footer>
-{whatsappUrl && (
-  <a href={whatsappUrl} target="_blank" rel="noopener" class="wa-float" aria-label="Message Paiwasta Technologies on WhatsApp">
+{whatsappUrl && !Astro.url.pathname.startsWith('/contact') && (
+  <aside aria-label="Quick contact"><a href={whatsappUrl} target="_blank" rel="noopener" class="wa-float" aria-label="Message Paiwasta Technologies on WhatsApp">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"></path></svg>
-  </a>
+  </a></aside>
 )}
 <style>
   .cta { position: relative; z-index: 2; padding: clamp(72px, 9vw, 120px) var(--gutter); overflow: hidden; }
@@ -100,6 +100,8 @@ const hasContactLines = !!(whatsappUrl || contact.phone || contact.email || cont
   .ft-legal a:hover { color: #3FCF9A; }
   .wa-float { position: fixed; right: calc(18px + var(--safe-r)); bottom: calc(18px + var(--safe-b)); z-index: 60; width: 56px; height: 56px; border-radius: 50%; background: #0E9F6E; color: #0B1F3A; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 28px rgba(0,0,0,.3); transition: background .2s, transform .2s; }
   .wa-float:hover { background: #19B47F; color: #0B1F3A; transform: translateY(-2px); }
+  /* On phones, step aside while someone is typing in a form field, so it never covers the field. */
+  @media (max-width: 767px) { :global(body:has(input:focus, textarea:focus, select:focus)) .wa-float { display: none; } }
   /* Leave room at the very bottom so the floating button never covers the last links. */
   :global(body:has(.wa-float)) .site-footer { padding-bottom: calc(96px + var(--safe-b)); }
 </style>

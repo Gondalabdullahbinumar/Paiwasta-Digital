@@ -24,10 +24,10 @@ export const business = {
 
 export const contact = {
   // WhatsApp number in international format, digits only, e.g. '923001234567'.
-  whatsapp: null as string | null,
+  whatsapp: '923336187564' as string | null,
   // How the number is shown on the page, e.g. '+92 300 1234567'.
-  whatsappLabel: null as string | null,
-  phone: null as string | null, // shown as written, e.g. '+92 51 1234567'
+  whatsappLabel: '+92 333 6187564' as string | null,
+  phone: '+92 333 6187564' as string | null, // shown as written, e.g. '+92 51 1234567'
   email: null as string | null, // e.g. 'hello@paiwasta.com'
   address: null as string | null, // e.g. 'Office 4, Blue Area, Islamabad'
   hours: null as string | null, // e.g. 'Monday to Saturday, 9:00 to 18:00'
