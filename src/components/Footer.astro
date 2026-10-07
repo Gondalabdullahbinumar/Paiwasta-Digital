@@ -1,0 +1,105 @@
+---
+// Call-to-action band (optional), footer, and the floating WhatsApp button.
+// Contact lines and social links appear only once they are filled in src/data/site.ts.
+import Logo from './Logo.astro';
+import { services, serviceHref, features, contact, whatsappUrl, activeSocial, displayName, business } from '../data/site';
+
+interface Props { cta?: boolean }
+const { cta = true } = Astro.props;
+const company = [
+  ['Home', '/'], ['About', '/about'], ['Services', '/services'], ['Pricing', '/pricing'], ['Work', '/work'],
+  ['Process', '/process'], ...(features.insights ? [['Insights', '/insights']] : []), ['FAQ', '/faq'], ['Careers', '/careers'], ['Contact', '/contact'],
+];
+const year = new Date().getFullYear();
+const hasContactLines = !!(whatsappUrl || contact.phone || contact.email || contact.address || contact.hours);
+---
+{cta && (
+  <section aria-labelledby="cta-h" class="cta navy">
+    <div data-draw class="cta-line" aria-hidden="true"></div>
+    <div class="blueprint cta-box" data-reveal>
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div>
+        <p class="eyebrow">Free consultation</p>
+        <h2 id="cta-h">Talk to one team about your whole online presence.</h2>
+        <p class="cta-text">A 30-minute call to understand your business and recommend where to start. There is no charge and no obligation.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="/contact">Book a free consultation</a>
+        {whatsappUrl && <a class="btn btn-on-navy" href={whatsappUrl} target="_blank" rel="noopener">Message us on WhatsApp</a>}
+      </div>
+    </div>
+  </section>
+)}
+<footer class="site-footer">
+  <div class="ft-grid">
+    <div class="ft-brand">
+      <a href="/" aria-label="Paiwasta Technologies, home" class="ft-logo"><Logo id="ftr" /></a>
+      <p lang="ur" dir="rtl" class="ft-urdu">پیوستہ</p>
+      <p class="ft-desc">Design, websites, software, video and AI integrations from one accountable team, for businesses in {business.markets}.</p>
+    </div>
+    <nav aria-label="Company" class="ft-col">
+      <h2 class="ft-h">Company</h2>
+      {company.map(([label, href]) => <a href={href}>{label}</a>)}
+    </nav>
+    <nav aria-label="Services" class="ft-col">
+      <h2 class="ft-h">Services</h2>
+      {services.map((s) => <a href={serviceHref(s)}>{s.name}</a>)}
+      <a href="/services" class="ft-all">All services</a>
+    </nav>
+    <div class="ft-col ft-contact">
+      <h2 class="ft-h">Contact</h2>
+      {whatsappUrl && <a href={whatsappUrl} target="_blank" rel="noopener">WhatsApp: {contact.whatsappLabel ?? contact.whatsapp}</a>}
+      {contact.phone && <a href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`}>Phone: {contact.phone}</a>}
+      {contact.email && <a href={`mailto:${contact.email}`}>Email: {contact.email}</a>}
+      {contact.address ? <span>{contact.address}</span> : <span>{business.city}, {business.country}</span>}
+      {contact.hours && <span>{contact.hours}</span>}
+      {!hasContactLines && <a href="/contact">Book a free consultation</a>}
+      {activeSocial.length > 0 && (
+        <div class="ft-social">
+          {activeSocial.map((s) => <a href={s.url!} target="_blank" rel="noopener me">{s.name}</a>)}
+        </div>
+      )}
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <span>© {year} {displayName}. {business.tagline}</span>
+    <span class="ft-legal"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></span>
+  </div>
+</footer>
+{whatsappUrl && (
+  <a href={whatsappUrl} target="_blank" rel="noopener" class="wa-float" aria-label="Message Paiwasta Technologies on WhatsApp">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"></path></svg>
+  </a>
+)}
+<style>
+  .cta { position: relative; z-index: 2; padding: clamp(72px, 9vw, 120px) var(--gutter); overflow: hidden; }
+  .cta-line { position: absolute; left: 50%; top: 0; width: 1px; height: 64px; background: linear-gradient(#0E9F6E, transparent); }
+  .cta-box { max-width: 1100px; margin: 0 auto; padding: clamp(28px, 5vw, 64px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 32px; align-items: center; background: rgba(255,255,255,.03); border-color: rgba(14,159,110,.35); }
+  .cta h2 { margin: 0 0 12px; font-size: clamp(28px, 4vw, 42px); }
+  .cta-text { margin: 0; color: rgba(247,249,251,.78); max-width: 52ch; }
+  .cta-actions { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+  .site-footer { position: relative; z-index: 2; background: #081830; color: rgba(247,249,251,.78); padding: clamp(56px, 7vw, 88px) var(--gutter) calc(32px + var(--safe-b)); border-top: 1px solid rgba(14,159,110,.25); }
+  .site-footer :focus-visible { outline-color: #3FCF9A; }
+  .ft-grid { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 40px 32px; }
+  .ft-brand { min-width: 0; }
+  .ft-logo { display: inline-flex; text-decoration: none; min-height: 44px; align-items: center; }
+  .ft-urdu { margin: 14px 0 6px; font-size: 26px; line-height: 2; color: #3FCF9A; text-align: left; }
+  .ft-desc { margin: 0; font-size: 14.5px; max-width: 34ch; }
+  .ft-col { display: flex; flex-direction: column; font-size: 14.5px; min-width: 0; }
+  .ft-h { margin: 0 0 10px; font: 600 12px/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: #F7F9FB; }
+  .ft-col a { display: flex; align-items: center; min-height: 40px; color: rgba(247,249,251,.78); text-decoration: none; }
+  .ft-col a:hover { color: #3FCF9A; }
+  .ft-col a.ft-all { color: #3FCF9A; }
+  .ft-contact span { padding: 8px 0; }
+  .ft-social { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .ft-social a { min-height: 44px; padding: 0 12px; border: 1px solid rgba(247,249,251,.2); color: #F7F9FB; font-size: 13px; }
+  .ft-social a:hover { border-color: #0E9F6E; color: #F7F9FB; }
+  .ft-bottom { max-width: 1240px; margin: 48px auto 0; padding-top: 20px; border-top: 1px solid rgba(247,249,251,.1); display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: center; font-size: 13px; }
+  .ft-legal { display: flex; gap: 20px; }
+  .ft-legal a { color: rgba(247,249,251,.78); display: inline-flex; align-items: center; min-height: 44px; }
+  .ft-legal a:hover { color: #3FCF9A; }
+  .wa-float { position: fixed; right: calc(18px + var(--safe-r)); bottom: calc(18px + var(--safe-b)); z-index: 60; width: 56px; height: 56px; border-radius: 50%; background: #0E9F6E; color: #0B1F3A; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 28px rgba(0,0,0,.3); transition: background .2s, transform .2s; }
+  .wa-float:hover { background: #19B47F; color: #0B1F3A; transform: translateY(-2px); }
+  /* Leave room at the very bottom so the floating button never covers the last links. */
+  :global(body:has(.wa-float)) .site-footer { padding-bottom: calc(96px + var(--safe-b)); }
+</style>

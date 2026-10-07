@@ -1,0 +1,58 @@
+---
+// Inner page hero: breadcrumb, optional kicker, title (the page's one main heading),
+// one-line introduction and the small linked-rings accent. Also outputs breadcrumb structured data.
+import Rings from './Rings.astro';
+interface Props { title: string; intro: string; crumb?: string; kicker?: string; parent?: { name: string; href: string } }
+const { title, intro, kicker, parent } = Astro.props;
+const crumb = Astro.props.crumb ?? title;
+const site = Astro.site!;
+const trail = [
+  { name: 'Home', item: new URL('/', site).href },
+  ...(parent ? [{ name: parent.name, item: new URL(parent.href, site).href }] : []),
+  { name: crumb, item: new URL(Astro.url.pathname.replace(/\.html$/, ''), site).href },
+];
+const breadcrumbLd = {
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+  itemListElement: trail.map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: t.name, item: t.item })),
+};
+---
+<section class="page-hero navy">
+  <div class="ph-grid">
+    <div class="ph-text">
+      <nav aria-label="Breadcrumb">
+        <ol class="crumbs">
+          <li><a href="/">Home</a></li>
+          {parent && <><li aria-hidden="true" class="sep">/</li><li><a href={parent.href}>{parent.name}</a></li></>}
+          <li aria-hidden="true" class="sep">/</li>
+          <li aria-current="page" class="cur">{crumb}</li>
+        </ol>
+      </nav>
+      {kicker && <p class="eyebrow">{kicker}</p>}
+      <h1>{title}</h1>
+      <p class="intro">{intro}</p>
+    </div>
+    <div class="ph-rings"><Rings max="260px" decorative /></div>
+  </div>
+  <div class="ph-line" aria-hidden="true"></div>
+</section>
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+<style>
+  .page-hero {
+    position: relative; overflow: hidden;
+    padding: calc(var(--header-h) + clamp(52px, 8vw, 100px)) var(--gutter) clamp(56px, 7vw, 96px);
+    background-image: linear-gradient(rgba(247,249,251,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(247,249,251,.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+  .ph-grid { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 40px; align-items: end; }
+  .ph-text { min-width: 0; }
+  .crumbs { list-style: none; margin: 0 0 24px; padding: 0; display: flex; flex-wrap: wrap; gap: 0 8px; font-size: 13.5px; color: #A9BCD0; }
+  .crumbs a { color: #A9BCD0; display: inline-flex; align-items: center; min-height: 44px; }
+  .crumbs a:hover { color: #3FCF9A; }
+  .crumbs .sep { color: #0E9F6E; display: flex; align-items: center; }
+  .crumbs .cur { color: #F7F9FB; display: flex; align-items: center; min-height: 44px; }
+  .eyebrow { margin-bottom: 14px; }
+  h1 { margin: 0 0 18px; font-size: clamp(34px, 5.4vw, 64px); line-height: 1.08; max-width: 18ch; color: #F7F9FB; overflow-wrap: break-word; }
+  .intro { margin: 0; font-size: clamp(17px, 1.6vw, 20px); color: rgba(247,249,251,.8); max-width: 56ch; }
+  .ph-rings { justify-self: end; width: min(260px, 70%); opacity: .75; }
+  .ph-line { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, transparent, #0E9F6E, transparent); opacity: .6; }
+</style>

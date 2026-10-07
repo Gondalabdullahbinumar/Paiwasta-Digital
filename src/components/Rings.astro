@@ -1,0 +1,25 @@
+---
+// Five linked rings: the static illustration used across the site and as the 3D fallback.
+interface Props { max?: string; label?: string; drift?: boolean; decorative?: boolean }
+const { max = '300px', drift = false, decorative = false } = Astro.props;
+const label = Astro.props.label ?? (drift ? 'Five linked rings, with one ring drifting away' : 'Five linked rings');
+---
+<svg viewBox="0 0 300 90" width="100%" class="rings" style={`max-width:${max}`}
+  {...(decorative ? { 'aria-hidden': 'true' } : { role: 'img', 'aria-label': label })}>
+  <g fill="none" stroke-width="3">
+    <circle cx="46" cy="45" r="30" stroke="#0E9F6E"></circle>
+    <circle cx="98" cy="45" r="30" stroke="#F7F9FB" stroke-opacity=".85"></circle>
+    <circle cx="150" cy="45" r="30" stroke="#0E9F6E"></circle>
+    <circle cx="202" cy="45" r="30" stroke="#F7F9FB" stroke-opacity=".85"></circle>
+    {drift
+      ? <circle class="drift" cx="254" cy="45" r="30" stroke="#D4A72C" stroke-dasharray="4 6"></circle>
+      : <circle cx="254" cy="45" r="30" stroke="#0E9F6E"></circle>}
+    <path d="M72 30 A30 30 0 0 1 72 60" stroke="#0E9F6E"></path>
+    <path d="M176 30 A30 30 0 0 1 176 60" stroke="#0E9F6E"></path>
+  </g>
+</svg>
+<style>
+  .rings { display: block; overflow: visible; height: auto; }
+  .drift { transform: translate(34px, -14px); animation: pw-drift 6s ease-in-out infinite; }
+  @keyframes pw-drift { 50% { transform: translate(44px, -22px); } }
+</style>

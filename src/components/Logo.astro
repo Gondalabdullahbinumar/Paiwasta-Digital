@@ -1,0 +1,26 @@
+---
+// The Paiwasta symbol (two interlocked links forming a P) and wordmark, from the approved design.
+interface Props { id?: string; size?: number }
+const { id = 'pw', size = 34 } = Astro.props;
+const clip = `${id}-lk`;
+---
+<span class="logo">
+  <svg width={size} height={size} viewBox="0 0 40 40" fill="none" aria-hidden="true">
+    <rect x="10" y="5" width="22" height="19" rx="9.5" stroke="#F7F9FB" stroke-width="3"></rect>
+    <rect x="6" y="5" width="11" height="30" rx="5.5" stroke="#0E9F6E" stroke-width="3"></rect>
+    <defs><clipPath id={clip}><rect x="14" y="19" width="6" height="8"></rect></clipPath></defs>
+    <rect x="10" y="5" width="22" height="19" rx="9.5" stroke="#0B1F3A" stroke-width="7" clip-path={`url(#${clip})`}></rect>
+    <rect x="10" y="5" width="22" height="19" rx="9.5" stroke="#F7F9FB" stroke-width="3" clip-path={`url(#${clip})`}></rect>
+  </svg>
+  <span class="logo-words">
+    <span class="logo-name">Paiwasta</span>
+    <span class="logo-sub">Technologies</span>
+  </span>
+</span>
+<style>
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo svg { flex-shrink: 0; }
+  .logo-words { display: flex; flex-direction: column; line-height: 1; }
+  .logo-name { font: 600 19px/1 var(--font-heading); color: #F7F9FB; letter-spacing: -0.01em; }
+  .logo-sub { font: 500 9.5px/1 var(--font-body); color: #A9BCD0; letter-spacing: .24em; text-transform: uppercase; margin-top: 5px; }
+</style>

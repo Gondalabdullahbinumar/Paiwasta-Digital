@@ -1,0 +1,20 @@
+# Built site (Vercel rebuilds it)
+dist/
+.astro/
+
+# Installed packages (reinstalled with npm install)
+node_modules/
+
+# Test output
+test-results/
+screenshots/
+lighthouse/
+
+# Secrets and local settings
+.env
+.env.*
+.vercel/
+
+# System files
+.DS_Store
+*.log

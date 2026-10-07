@@ -1,0 +1,14 @@
+---
+// FAQ accordion. Uses the browser's built-in open/close element, so every answer
+// is in the page for Google and screen readers, and works without JavaScript.
+interface Props { items: [string, string][] }
+const { items } = Astro.props;
+---
+<div class="faq">
+  {items.map(([q, a]) => (
+    <details>
+      <summary><span>{q}</span><span class="sign" aria-hidden="true"></span></summary>
+      <div class="answer"><p>{a}</p></div>
+    </details>
+  ))}
+</div>
