@@ -80,7 +80,7 @@ export const features = {
 };
 
 // Google Search Console verification code (the content="..." value only).
-export const googleSiteVerification: string | null = 'pAIpXVIUaHsxFc1ZfCaWYG-wu';
+export const googleSiteVerification: string | null = 'pAIpXVIUaHsxFc1ZfCaWYG-wu3IjMa76-lCF84OowfM';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SERVICES, PRICES AND CONTENT (from the approved design and the agency profile)
