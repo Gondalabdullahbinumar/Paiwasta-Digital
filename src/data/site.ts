@@ -56,7 +56,7 @@ export const founder = {
 // Form services. Both are free. See LAUNCH-CHECKLIST.md for how to get these.
 export const forms = {
   // Contact form → Web3Forms access key (sent to your email when you sign up at web3forms.com).
-  web3formsKey: null as string | null,
+  web3formsKey: 'fb22cc36-7e4d-4004-bab9-9d69fc09aa38' as string | null,
   // Careers form → FormSubmit address: your email, or the private alias FormSubmit gives you.
   careersFormsubmit: null as string | null,
   // How long job applications are kept, e.g. '12 months'.
